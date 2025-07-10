@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.exceptions import ValidationError, NotFound
 from rest_framework.filters import SearchFilter, OrderingFilter
-from django_filters.rest_framework import DjangoFilterFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db.models import Q, Count, Sum, F
@@ -28,7 +28,7 @@ from .serializers import (
     SubscriptionStatsSerializer, DashboardSerializer, SubscriptionListSerializer,
     PaymentListSerializer, SubscriptionUsageSerializer
 )
-from .services.khalti_service import KhaltiService, KhaltiException
+from .khalti_service import KhaltiService, KhaltiException
 from .filters import SubscriptionFilter, PaymentFilter
 from .permissions import IsOwnerOrAdmin, IsSubscriptionOwner
 from .utils import generate_order_id, send_payment_notification, create_usage_record
@@ -80,7 +80,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     """ViewSet for user subscriptions"""
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
-    filter_backends = [DjangoFilterFilter, SearchFilter, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = SubscriptionFilter
     search_fields = ['plan__name', 'status']
     ordering_fields = ['created_at', 'start_date', 'end_date']
@@ -283,7 +283,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
     """ViewSet for payments"""
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
-    filter_backends = [DjangoFilterFilter, SearchFilter, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = PaymentFilter
     search_fields = ['pidx', 'khalti_transaction_id', 'status']
     ordering_fields = ['created_at', 'completed_at', 'amount']
